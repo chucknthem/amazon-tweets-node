@@ -1,0 +1,62 @@
+<html>
+   <head>
+      <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
+      <script>
+         function parseTopResult(item) {
+            var result = {};
+            result.url = "http://www.amazon" + item['value']['d'] + "/dp/" + item['_id']
+            result.img_url = 'http://images.amazon.com/images/P/' + item['_id'] + '.01._THUMBZZZ_.jpg'; 
+            result.count = item['value']['c'];
+            return result;
+         }
+         function refresh() {
+            $.getJSON("http://localhost:17484/?callback=?",
+            function(data) {
+               $("#content").empty();
+               for(var i = data.results.length - 1; i >= 0; i--) {
+                  var item = data.results[i];
+                  var a = $("<a>").attr("href", item.url).appendTo("#content");
+                  //$("#content").prepend(a);
+                  $("<img/>").attr("src", item.img_url).appendTo(a);
+               }
+            });
+            $.getJSON("http://localhost:17484/?tophour=10&callback=?", 
+            function(data) {
+               $("#top10").empty();
+               var list = $("<ol>").appendTo("#top10");
+               for (var i = 0; i < data.results.length; i++) {
+                  var  item = parseTopResult(data.results[i]);
+                  var li = $("<li>").appendTo(list);
+                  var a = $("<a>").attr("href", item.url).appendTo(li);
+                  $("<p>").html("tweeted " + item.count + " times").appendTo(a);
+                  $("<img/>").attr("src", item.img_url).appendTo(a);
+               }
+            });
+         }
+      </script>
+      <style>
+         .top{
+            float:left;
+            width:300px;
+         }
+         .content {
+            margin-left:320px;
+         }
+      </style>
+   </head>
+   <body>
+      <div class="top">
+         <h2>Top 10 items in the last hour</h2>
+         <div id="top10"></div>
+      </div>
+
+      <div class="content">
+         <h2>Just tweeted</h2>
+         <div id="content"></div>
+      </div>
+      <script>
+         refresh();
+         setInterval('refresh()', 15000);
+      </script>
+   </body>
+</html>

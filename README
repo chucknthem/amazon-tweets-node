@@ -1,0 +1,37 @@
+Extracts tweets with amzn.com short URL links from the twitter streaming API. It keeps a running 100 of the most recent tweets with amzn links in application memory, and stores all of the tweets in a mongodb
+
+This project is a sandbox project to help me learn nodejs, mongodb, and the twitter API
+
+Seeing what products from amazon are being tweeted is kinda cool, and might be useful so I decided to open source it. 
+
+Still need to add categorization by amazon domain. Lots of questionable products are been tweeted from amazon.co.jp (wtf japan?) so that should be filtered out
+
+== SETUP ==
+ 1. You'll need nodejs > 0.2.5 (nodejs.org), this was tested on nodejs 0.4.1
+
+ 2. This uses the twitter-node plugin, which you can get using 
+    npm install twitter-node
+   or from https://github.com/technoweenie/twitter-node
+
+ 3. You'll also need the mongodb driver for node
+     npm install mongodb
+   or from https://github.com/christkv/node-mongodb-native
+   
+ 4. install mongodb (http://mongodb.org/downloads)
+
+== USAGE ==
+ 1. Set environment variables for a twitter account
+   AMZNTWEETS_USER = twitter_username
+   AMZNTWEETS_PASSWORD = twitter_password
+
+ 2. run 
+     node amazon_tweets.js
+   this will start a connection with stream.twitter.com and start scanning for amzn.com tweets
+   it will also start an http server on port 17484 to serve json data about those tweets
+   
+ 3. open index.html in a browser with decent javascript support to view the top 10 tweeted products in the last hour and a list of 100 most recently tweeted products
+
+ 
+In localhost:17484/?tophour=20 will give you the top 20 most tweeted products in the last hour
+localhost:17484/?callback=foo will return results in a json format style using foo({json_string}) to help with cross domain ajax requests
+
